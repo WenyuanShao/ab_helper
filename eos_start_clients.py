@@ -76,8 +76,10 @@ def start_clients(k, https_port, nb_requests, nb_clients, client_port):
     for _ in range(nb_clients):
         nc = increment_core_num(0)
         client_list.append(client(k, https_port, nb_requests, nc, client_port))
+        """
         if https_port > 0:
             https_port += 1
+        """
         if client_port > 0:
             client_port += 1
     return client_list
