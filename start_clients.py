@@ -4,7 +4,8 @@ import time
 
 cur_core = 0
 nb_cores = 1
-server = "127.0.0.1"
+server = "10.10.1.2"
+offset = 20;
 
 class client(object):
     def __init__(self, k, https_port, nb_requests, core, client_port):
@@ -12,10 +13,10 @@ class client(object):
 
         self.args = ["taskset"]
         self.args.extend(["-c", str(core)])
-        self.args.extend(["./ab"])
+        self.args.extend(["ab"])
         if k:
             self.args.extend(["-k"])
-        self.args.extend(["-D", str(client_port)])
+#       self.args.extend(["-D", str(client_port)])
         self.args.extend(["-n", str(nb_requests)])
         self.args.extend(["https://{}:{}/".format(server, https_port)])
 
@@ -42,7 +43,7 @@ class client(object):
 
             for line in f:
                 if line.startswith("Requests per second:"):
-                    print line
+		    print line
                     self.request_per_sec = line.split()[3].strip();
                     print self.request_per_sec
                     break
@@ -67,7 +68,7 @@ def form_ab(
 
 def increment_core_num(core):
     global cur_core
-    p = core + cur_core
+    p = core + cur_core + offset
     cur_core = (cur_core + 1) % nb_cores
     return p
 
@@ -94,7 +95,7 @@ def parse_args():
 if __name__ == '__main__':
 
     args = parse_args()
-    server = "127.0.0.1"
+    server = "10.10.1.2"
     client_port = 11211
     https_port = args.p if args.p else 443
     k = args.k
@@ -104,10 +105,10 @@ if __name__ == '__main__':
 
     client_list = start_clients(k, https_port, nb_requests, nb_clients, client_port)
 
-    time.sleep(10)
-    total_result = 0
+#    time.sleep(60)
+#    total_result = 0
 
-    for client in client_list:
-        total_result += float(client.parse_result())
+#    for client in client_list:
+#        total_result += float(client.parse_result())
 
-    print total_result
+#    print total_result

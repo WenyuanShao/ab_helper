@@ -4,11 +4,12 @@ import time
 
 cur_core = 0
 nb_cores = 1
-server = "127.0.0.1"
+server = "10.10.1.1"
 
 class client(object):
     def __init__(self, k, https_port, nb_requests, core, client_port):
-        self.https_port = https_port
+        self.https_port  = https_port
+	self.client_port = client_port
 
         self.args = ["taskset"]
         self.args.extend(["-c", str(core)])
@@ -31,7 +32,7 @@ class client(object):
         self.log_file_path.close()
 
     def create_log(self):
-        file_path = "logs/ab_{}".format(self.https_port)
+        file_path = "logs/ab_{}".format(self.client_port)
         f = open(file_path, "w+")
         f.write("ab arguments: {}\n\nSTDOUT:\n".format(str(self.args)))
         f.flush()
@@ -96,7 +97,7 @@ def parse_args():
 if __name__ == '__main__':
 
     args = parse_args()
-    server = "127.0.0.1"
+    server = "10.10.1.1"
     client_port = 11211
     https_port = args.p if args.p else 443
     k = args.k
@@ -106,7 +107,7 @@ if __name__ == '__main__':
 
     client_list = start_clients(k, https_port, nb_requests, nb_clients, client_port)
 
-    time.sleep(10)
+    time.sleep(60)
     total_result = 0
 
     for client in client_list:
