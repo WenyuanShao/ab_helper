@@ -4,7 +4,7 @@ import time
 
 cur_core = 0
 nb_cores = 1
-server = "10.10.1.1"
+server = "10.10.1.2"
 
 class client(object):
     def __init__(self, k, https_port, nb_requests, core, client_port):
@@ -97,7 +97,7 @@ def parse_args():
 if __name__ == '__main__':
 
     args = parse_args()
-    server = "10.10.1.1"
+    server = "10.10.1.2"
     client_port = 11211
     https_port = args.p if args.p else 443
     k = args.k
@@ -107,10 +107,10 @@ if __name__ == '__main__':
 
     client_list = start_clients(k, https_port, nb_requests, nb_clients, client_port)
 
-    time.sleep(60)
-    total_result = 0
+    #time.sleep(60)
+    #total_result = 0
 
-    for client in client_list:
-        total_result += float(client.parse_result())
+    #for client in client_list:
+     #   total_result += float(client.parse_result())
 
-    print total_result
+    #print total_result

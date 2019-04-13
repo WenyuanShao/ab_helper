@@ -18,7 +18,8 @@ class client(object):
             self.args.extend(["-k"])
 #       self.args.extend(["-D", str(client_port)])
         self.args.extend(["-n", str(nb_requests)])
-        self.args.extend(["https://{}:{}/".format(server, https_port)])
+	self.args.extend(["https://{}:{}/".format(server, https_port)])
+#        self.args.extend(["http://{}:{}/".format(server, https_port)])
 
         self.log_file_path, log_file = self.create_log()
         print self.args
