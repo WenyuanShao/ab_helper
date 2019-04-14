@@ -4,6 +4,7 @@ import argparse
 nserver = 0
 cur_core = 0
 ncores = 1
+filelen = 0
 
 class SSL(object):
     def __init__(self, http_port, https_port, core):
@@ -13,6 +14,7 @@ class SSL(object):
         self.args = ["taskset"]
         self.args.extend(["-c", str(core)])
         self.args.extend(["./axhttpd"])
+        self.args.extend(["-l", filelen])
         if http_port > 0:
             self.args.extend(["-p", str(http_port)])
         if https_port > 0:
