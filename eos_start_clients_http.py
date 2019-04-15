@@ -4,12 +4,12 @@ import time
 
 cur_core = 0
 nb_cores = 1
-server = "10.10.1.7"
-offset = 0;
+server = "10.10.1.2"
 
 class client(object):
     def __init__(self, k, https_port, nb_requests, core, client_port):
-        self.https_port = https_port
+        self.https_port  = https_port
+	self.client_port = client_port
 
         self.args = ["taskset"]
         self.args.extend(["-c", str(core)])
@@ -18,8 +18,7 @@ class client(object):
             self.args.extend(["-k"])
         self.args.extend(["-D", str(client_port)])
         self.args.extend(["-n", str(nb_requests)])
-	self.args.extend(["https://{}:{}/".format(server, https_port)])
-#        self.args.extend(["http://{}:{}/".format(server, https_port)])
+        self.args.extend(["http://{}:{}/".format(server, https_port)])
 
         self.log_file_path, log_file = self.create_log()
         print self.args
@@ -33,7 +32,7 @@ class client(object):
         self.log_file_path.close()
 
     def create_log(self):
-        file_path = "logs/ab_{}".format(self.https_port)
+        file_path = "logs/ab_{}".format(self.client_port)
         f = open(file_path, "w+")
         f.write("ab arguments: {}\n\nSTDOUT:\n".format(str(self.args)))
         f.flush()
@@ -44,7 +43,7 @@ class client(object):
 
             for line in f:
                 if line.startswith("Requests per second:"):
-		    print line
+                    print line
                     self.request_per_sec = line.split()[3].strip();
                     print self.request_per_sec
                     break
@@ -69,7 +68,7 @@ def form_ab(
 
 def increment_core_num(core):
     global cur_core
-    p = core + cur_core + offset
+    p = core + cur_core
     cur_core = (cur_core + 1) % nb_cores
     return p
 
@@ -78,8 +77,10 @@ def start_clients(k, https_port, nb_requests, nb_clients, client_port):
     for _ in range(nb_clients):
         nc = increment_core_num(0)
         client_list.append(client(k, https_port, nb_requests, nc, client_port))
+        """
         if https_port > 0:
             https_port += 1
+        """
         if client_port > 0:
             client_port += 1
     return client_list
@@ -96,7 +97,7 @@ def parse_args():
 if __name__ == '__main__':
 
     args = parse_args()
-    server = "10.10.1.7"
+    server = "10.10.1.2"
     client_port = 11211
     https_port = args.p if args.p else 443
     k = args.k
@@ -106,10 +107,10 @@ if __name__ == '__main__':
 
     client_list = start_clients(k, https_port, nb_requests, nb_clients, client_port)
 
-#    time.sleep(60)
-#    total_result = 0
+    #time.sleep(60)
+    #total_result = 0
 
-#    for client in client_list:
-#        total_result += float(client.parse_result())
+    #for client in client_list:
+     #   total_result += float(client.parse_result())
 
-#    print total_result
+    #print total_result
