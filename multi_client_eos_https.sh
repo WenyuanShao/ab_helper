@@ -9,7 +9,7 @@ cd logs
 rm -rf *
 cd ..
 
-python start_clients.py \
+python eos_start_clients.py \
 		-p 443 \
 		-k \
 		--nb_cores $1 \
