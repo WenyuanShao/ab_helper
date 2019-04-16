@@ -9,9 +9,13 @@ cd logs
 rm -rf *
 cd ..
 
-python eos_start_clients.py \
-		-p 443 \
+python start_clients.py \
+		-l \
 		-k \
+		-s 10.10.1.7\
 		--nb_cores $1 \
 		--nb_request 20000 \
-		--nb_client $2
+		--nb_client $2 \
+		--increment 1 \
+		--first_https_port 443 \
+		--first_client_port 11211 \

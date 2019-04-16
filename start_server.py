@@ -1,4 +1,4 @@
-import subprocess
+iport subprocess
 import argparse
 
 nserver = 0
@@ -14,7 +14,7 @@ class SSL(object):
         self.args = ["taskset"]
         self.args.extend(["-c", str(core)])
         self.args.extend(["./axhttpd"])
-        self.args.extend(["-l", filelen])
+        self.args.extend(["-l", str(filelen)])
         if http_port > 0:
             self.args.extend(["-p", str(http_port)])
         if https_port > 0:
