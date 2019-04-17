@@ -13,6 +13,7 @@ python start_clients.py \
 		-l \
 		-k \
 		-s 10.10.1.7\
+                -R 1000 \
 		--nb_cores $1 \
 		--nb_request 20000 \
 		--nb_client $2 \

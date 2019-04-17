@@ -9,7 +9,7 @@ offset = 0;
 increment = 0
 
 class client(object):
-    def __init__(self, k, is_ssl, port_num, nb_requests, core, client_port):
+    def __init__(self, k, is_ssl, port_num, nb_requests, core, client_port, rate_limit):
         self.port_num    = port_num
 	self.client_port = client_port
 
@@ -20,6 +20,7 @@ class client(object):
             self.args.extend(["-k"])
         self.args.extend(["-D", str(client_port)])
         self.args.extend(["-n", str(nb_requests)])
+        self.args.extend(["-R", str(rate_limit)])
         if is_ssl:
 	    self.args.extend(["https://{}:{}/".format(server, port_num)])
         else:
@@ -77,11 +78,11 @@ def increment_core_num(core):
     cur_core = (cur_core + 1) % nb_cores
     return p
 
-def start_clients(k, is_ssl, port_num, nb_requests, nb_clients, client_port):
+def start_clients(k, is_ssl, port_num, nb_requests, nb_clients, client_port, rate_limit):
     client_list=[]
     for _ in range(nb_clients):
         nc = increment_core_num(0)
-        client_list.append(client(k, is_ssl, port_num, nb_requests, nc, client_port))
+        client_list.append(client(k, is_ssl, port_num, nb_requests, nc, client_port, rate_limit))
         if port_num > 0:
             port_num += increment
         if client_port > 0:
@@ -93,6 +94,7 @@ def parse_args():
     parser.add_argument("-k", help="turn on Keep-Alive feature", action='store_true')
     parser.add_argument("-l", help="turn on ssl", action='store_true')
     parser.add_argument("-s", help="server ip address")
+    parser.add_argument("-R", help="set rate limit of ab", type=int)
     parser.add_argument("--first_https_port", help="server https port number", type=int)
     parser.add_argument("--first_http_port", help="server http port number", type=int)
     parser.add_argument("--nb_clients", help="number of clients to create", type=int)
@@ -111,15 +113,16 @@ if __name__ == '__main__':
     first_http_port = args.first_http_port if args.first_http_port else 1500
     increment = args.increment if args.increment else 0
     k = args.k
+    rate_limit = args.R if args.R else 0
     is_ssl = args.l
     nb_clients = args.nb_clients if args.nb_clients else 1
     nb_requests = args.nb_requests if args.nb_requests else 1
     nb_cores = args.nb_cores if args.nb_cores else 1
 
     if is_ssl == 1:
-        client_list = start_clients(k, is_ssl, first_https_port, nb_requests, nb_clients, first_client_port)
+        client_list = start_clients(k, is_ssl, first_https_port, nb_requests, nb_clients, first_client_port, rate_limit)
     else:
-        client_list = start_clients(k, is_ssl, first_http_port, nb_requests, nb_clients, first_client_port)
+        client_list = start_clients(k, is_ssl, first_http_port, nb_requests, nb_clients, first_client_port, rate_limit)
 
 #    time.sleep(60)
 #    total_result = 0
