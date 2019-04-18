@@ -6,7 +6,8 @@ files = os.listdir(path)
 s = []
 num = 0
 total_result = 0
-request_per_sec = 0
+req_per_sec_min = sys.maxint
+req_per_sec_max = 0
 time_taken_avg = 0
 time_taken_min = sys.maxint
 time_taken_max = 0
@@ -29,8 +30,10 @@ for file in files:
         for line in f:
             if line.startswith("Requests per second:"):
 #                print line
-                request_per_sec = line.split()[3].strip()
-        	total_result += float(request_per_sec)
+                temp = float(line.split()[3].strip())
+                req_per_sec_min = min(req_per_sec_min, temp)
+                req_per_sec_max = max(req_per_sec_max, temp)
+                total_result += temp
             elif line.startswith("Time taken for tests:"):
                 temp = float(line.split()[4].strip())
 		time_taken_min = min(temp, time_taken_min)
@@ -40,9 +43,9 @@ for file in files:
                 temp = (int)(line.split()[2].strip())
                 if temp > 0:
                     failure.append(11211+num+1)
-#                    print num
-                failed_request_tot += temp
-#                print temp
+                    failed_request_tot += temp
+#                    print "found err"
+                    break
             elif line.startswith("HTML transferred:"):
                 temp = (int)(line.split()[2].strip())
                 HTML_transferred_min = min(temp, HTML_transferred_min)
@@ -59,15 +62,16 @@ for file in files:
                 tail_latency_max = max(tail_latency_max, temp)
                 tail_latency_avg += temp
             flag = 1
+#        print "------------"
         num += 1
 
-print("Request per second:              {}".format(total_result))
+print("Request per second:              tot: {}, max: {}, min: {}".format(total_result, req_per_sec_max, req_per_sec_min))
 print("Number of success clients:       {}".format(num))
 print("Time taken for tests:            min: {}, max: {}, avg: {:.3f}".format(time_taken_min, time_taken_max, time_taken_avg/num))
 print("Failed requests:                 {}".format(failed_request_tot))
 print("HTML transferred:                min: {}, max: {}".format(HTML_transferred_min, HTML_transferred_max))
 print("Time per request:                min: {}, max: {}, avg: {:.3f}".format(time_per_req_min, time_per_req_max, time_per_req_avg/num))
 print("Tail lantency:                   min: {}, max: {}, avg: {}".format(tail_latency_min, tail_latency_max, tail_latency_avg/num))
-print("Possible failed client port num: ")
+print("Possible failed client logfile: ")
 for i in failure:
-    print("    {}".format(i))
+    print("    log/ab_{}".format(i))
