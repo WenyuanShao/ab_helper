@@ -11,6 +11,9 @@ class client(object):
         self.https_port  = https_port
 	self.client_port = client_port
 
+	rate = (client_port-11210)*200
+	self.rate = rate
+
         self.args = ["taskset"]
         self.args.extend(["-c", str(core)])
         self.args.extend(["./ab"])
@@ -18,6 +21,7 @@ class client(object):
             self.args.extend(["-k"])
         self.args.extend(["-D", str(client_port)])
         self.args.extend(["-n", str(nb_requests)])
+	self.args.extend(["-R", str(rate)])
         self.args.extend(["http://{}:{}/".format(server, https_port)])
 
         self.log_file_path, log_file = self.create_log()
